@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 @Repository
@@ -24,19 +25,20 @@ public class StudentRepository {
         teacherMap.put(teacher.getName(),teacher);
     }
     public void addStudentTeacherPair(String student,String teacher){
-        if(studentMap.containsKey(student) && teacherMap.containsKey(teacher)){
-            studentTeacherMap.put(student,teacher);
-        }
-        List<String> students = new ArrayList<>();
-        if(listStudentMap.containsKey(teacher)){
-         students = listStudentMap.get(teacher);
-        }
-        students.add(student);
-        listStudentMap.put(teacher,students);
+        if(studentMap.containsKey(student) && teacherMap.containsKey(teacher)) {
+            // studentTeacherMap.put(student,teacher);
 
-        //update the numberOfStudents
-        Teacher teachers = teacherMap.get(teacher);
-        teachers.setNumberOfStudents(students.size());
+            List<String> students = new ArrayList<>();
+            if (listStudentMap.containsKey(teacher))
+                students = listStudentMap.get(teacher);
+
+            students.add(student);
+            listStudentMap.put(teacher, students);
+
+            //update the numberOfStudents
+            //Teacher teachers = teacherMap.get(teacher);
+            // teachers.setNumberOfStudents(students.size());
+        }
     }
 
     public Student getStudentByName(String name){
@@ -59,29 +61,43 @@ public class StudentRepository {
         return allStudents;
     }
 
-    public  void deleteTeacherByName(String name){
-        if(teacherMap.containsKey(name)){
-            teacherMap.remove(name);
+    public  void deleteTeacherByName(String name) {
 
-            //if(studentTeacherMap.containsKey(name))
-               // studentTeacherMap.remove(name);
+        List<String> listOfStudents = new ArrayList<>();             // listStudentMap.get(name);
+        if (listStudentMap.containsKey(name)) {
+            listOfStudents = listStudentMap.get(name);
 
-            List<String> listOfStudents = listStudentMap.get(name);
-            listStudentMap.remove(name);
-
-            for(String students : listOfStudents){
-                studentTeacherMap.remove(students);
+            for (String students : listOfStudents) {
+                if (studentMap.containsKey(students))
+                    studentMap.remove(students);
             }
+            listStudentMap.remove(name);
+        }
+        if (teacherMap.containsKey(name)) {
+            teacherMap.remove(name);
         }
     }
 
     public void deleteAllTeachers() {
-        for(String deleteTeachers : teacherMap.keySet())
-            teacherMap.remove(deleteTeachers);
+        HashSet<String> studentSet = new HashSet<String>();
+        //Deleting the teacher's map
+        teacherMap = new HashMap<>();
 
-        for(String deleteTeacher : listStudentMap.keySet())
-            listStudentMap.remove(deleteTeacher);
+        //Finding out all the students of the teachers combined
+        for(String teachers : listStudentMap.keySet()) {
 
-
+            //Iterating in the list of movies by a director.
+            for (String student : listStudentMap.get(teachers)) {
+                studentSet.add(student);
+            }
+        }
+        //Deleting the student from the studentDb.
+        for(String student : studentSet){
+            if(studentMap.containsKey(student)){
+                studentMap.remove(student);
+            }
+        }
+        //clearing the pair.
+        listStudentMap = new HashMap<>();
     }
 }
