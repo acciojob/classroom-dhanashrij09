@@ -9,21 +9,21 @@ import java.util.List;
 @Repository
 
 public class StudentRepository {
-    private static HashMap<String,Student> studentMap = new HashMap<>();
-    private static HashMap<String,Teacher> teacherMap = new HashMap<>();
-    private static HashMap<String,String> studentTeacherMap = new HashMap<>();
-    private static HashMap<String, List<String>> listStudentMap = new HashMap<>();
+    private HashMap<String,Student> studentMap = new HashMap<>();
+    private HashMap<String,Teacher> teacherMap = new HashMap<>();
+    private HashMap<String,String> studentTeacherMap = new HashMap<>();
+    private HashMap<String, List<String>> listStudentMap = new HashMap<>();
 
 
 
-    public static void addStudent(Student student){
+    public void addStudent(Student student){
         studentMap.put(student.getName(),student);
     }
 
-    public static void addTeacher(Teacher teacher){
+    public void addTeacher(Teacher teacher){
         teacherMap.put(teacher.getName(),teacher);
     }
-    public static void addStudentTeacherPair(String student,String teacher){
+    public void addStudentTeacherPair(String student,String teacher){
         if(studentMap.containsKey(student) && teacherMap.containsKey(teacher)){
             studentTeacherMap.put(student,teacher);
         }
@@ -39,19 +39,19 @@ public class StudentRepository {
         teachers.setNumberOfStudents(students.size());
     }
 
-    public static Student getStudentByName(String name){
+    public Student getStudentByName(String name){
         return studentMap.get(name);
     }
 
-    public static Teacher getTeacherByName(String name){
+    public Teacher getTeacherByName(String name){
         return teacherMap.get(name);
     }
 
-    public static List<String> getStudentsByTeacherName(String name){
+    public List<String> getStudentsByTeacherName(String name){
       return listStudentMap.get(name);
     }
 
-    public static List<String> getAllStudents(){
+    public List<String> getAllStudents(){
         List<String> allStudents = new ArrayList<>();
         for(String student : studentMap.keySet()){
            allStudents.add(student);
@@ -59,9 +59,12 @@ public class StudentRepository {
         return allStudents;
     }
 
-    public static void deleteTeacherByName(String name){
+    public  void deleteTeacherByName(String name){
         if(teacherMap.containsKey(name)){
             teacherMap.remove(name);
+
+            //if(studentTeacherMap.containsKey(name))
+               // studentTeacherMap.remove(name);
 
             List<String> listOfStudents = listStudentMap.get(name);
             listStudentMap.remove(name);
@@ -72,7 +75,7 @@ public class StudentRepository {
         }
     }
 
-    public static void deleteAllTeachers() {
+    public void deleteAllTeachers() {
         for(String deleteTeachers : teacherMap.keySet())
             teacherMap.remove(deleteTeachers);
 
